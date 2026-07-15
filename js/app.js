@@ -56,7 +56,16 @@ class UI {
             const li = document.createElement('li');
             li.className = 'list-group-item d-flex justify-content-between align-items-center';
             li.dataset.id = id;
-            li.innerHTML = `${nombre} <span class="badge badge-primary badge-pill">$ ${monto}</span>`;
+
+            const nombreGasto = document.createElement('span');
+            nombreGasto.textContent = nombre;
+
+            const cantidadGasto = document.createElement('span');
+            cantidadGasto.classList.add('badge', 'badge-primary', 'badge-pill');
+            cantidadGasto.textContent = `$ ${monto}`;
+
+            li.appendChild(nombreGasto);
+            li.appendChild(cantidadGasto);
 
             const btnBorrar = document.createElement('button');
             btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
@@ -104,6 +113,7 @@ function solicitarPresupuesto() {
 
     if (!ingreso || isNaN(ingreso) || ingreso <= 0) {
         window.location.reload();
+        return;
     }
 
     presupuesto = new Presupuesto(ingreso);
@@ -116,12 +126,12 @@ function agregarGasto(e) {
     const nombre = document.querySelector('#gasto').value.trim();
     const monto = Number(document.querySelector('#cantidad').value.trim());
 
-    if (nombre === '' || monto === '') {
-        ui.mostrarAlerta('Ambos campos son obligatorios', 'error');
+    if (nombre === '') {
+        ui.mostrarAlerta('El nombre del gasto es obligatorio', 'error');
         return;
     }
 
-    if (monto <= 0 || isNaN(monto)) {
+    if (isNaN(monto) || monto <= 0) {
         ui.mostrarAlerta('El monto no es válido', 'error');
         return;
     }
