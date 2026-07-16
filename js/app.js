@@ -6,7 +6,7 @@ const listaGastos = document.querySelector('#gastos ul');
 let presupuesto;
 
 // Eventos
-document.addEventListener('DOMContentLoaded', solicitarPresupuesto);
+document.addEventListener('DOMContentLoaded', cargarLocalStorage);
 formulario.addEventListener('submit', agregarGasto);
 
 // Clases
@@ -108,6 +108,27 @@ class UI {
 const ui = new UI();
 
 // Funciones
+function cargarLocalStorage() {
+    const presupuestoGuardado = JSON.parse(localStorage.getItem('presupuesto'));
+
+    if (presupuestoGuardado) {
+        presupuesto = new Presupuesto(presupuestoGuardado.presupuestoInicial);
+        presupuesto.gastos = presupuestoGuardado.gastos;
+        presupuesto.calcularRestante();
+
+        ui.mostrarPresupuesto(presupuesto);
+        ui.mostrarGastos(presupuesto.gastos);
+        ui.actualizarRestante(presupuesto.presupuestoDisponible);
+        ui.comprobarPresupuesto(presupuesto);
+    } else {
+        solicitarPresupuesto();
+    }
+}
+
+function guardarLocalStorage() {
+    localStorage.setItem('presupuesto', JSON.stringify(presupuesto));
+}
+
 function solicitarPresupuesto() {
     const ingreso = prompt('¿Cuál es tu presupuesto semanal?');
 
@@ -118,6 +139,7 @@ function solicitarPresupuesto() {
 
     presupuesto = new Presupuesto(ingreso);
     ui.mostrarPresupuesto(presupuesto);
+    guardarLocalStorage();
 }
 
 function agregarGasto(e) {
@@ -144,6 +166,7 @@ function agregarGasto(e) {
     ui.mostrarGastos(gastos);
     ui.actualizarRestante(presupuestoDisponible);
     ui.comprobarPresupuesto(presupuesto);
+    guardarLocalStorage();
 
     formulario.reset();
 }
@@ -155,4 +178,5 @@ function eliminarGasto(id) {
     ui.mostrarGastos(gastos);
     ui.actualizarRestante(presupuestoDisponible);
     ui.comprobarPresupuesto(presupuesto);
+    guardarLocalStorage();
 }
